@@ -28,7 +28,7 @@ Este microservicio permite centralizar manuales, reportes y normativas, aseguran
 1.  **Clonar el repositorio**
 
     ```bash
-    git clone <URL_TU_REPOSITORIO>
+    git clone https://github.com/andr31a/miune-docs-api
     cd miune-docs-api
     ```
 
