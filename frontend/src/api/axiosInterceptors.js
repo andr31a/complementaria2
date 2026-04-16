@@ -1,8 +1,13 @@
 import axios from 'axios';
 import useAuthStore from '../store/useAuthStore';
 
+const PROD_URL = 'https://miune-docs-api.onrender.com/api';
+const DEV_URL  = 'http://localhost:3000/api';
+const BASE_URL = import.meta.env.VITE_API_URL
+  || (import.meta.env.DEV ? DEV_URL : PROD_URL);
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api', // Conexión a tu Express
+  baseURL: BASE_URL,
 });
 
 // Request Interceptor: Adjunta el JWT token si existe en Zustand Store
