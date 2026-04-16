@@ -15,9 +15,8 @@
 
 | Servicio | URL |
 |----------|-----|
-| 🌐 Frontend (Vercel) | `https://miunedocsapi.vercel.app` |
-| ⚙️ Backend API (Render) | `https://miune-docs-api.onrender.com/|
-| 📖 Documentación Swagger | `{BASE_URL}/api/docs` |
+| 🌐 Frontend (Vercel) | https://miunedocsapi.vercel.app |
+| ⚙️ Backend API (Render) | https://miune-docs-api.onrender.com/|
 
 ---
 
