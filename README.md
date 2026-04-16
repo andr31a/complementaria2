@@ -17,6 +17,8 @@
 |----------|-----|
 | 🌐 Frontend (Vercel) | https://miunedocsapi.vercel.app |
 | ⚙️ Backend API (Render) | https://miune-docs-api.onrender.com/|
+| 📖 Documentación Swagger | https://miune-docs-api.onrender.com/api/docs
+ |
 
 ---
 
