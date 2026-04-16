@@ -15,8 +15,8 @@
 
 | Servicio | URL |
 |----------|-----|
-| 🌐 Frontend (Vercel) | `https://miune-docs.vercel.app` *(pendiente de deploy)* |
-| ⚙️ Backend API (Render) | `https://miune-docs-api.onrender.com` *(pendiente de deploy)* |
+| 🌐 Frontend (Vercel) | `https://miunedocsapi.vercel.app` |
+| ⚙️ Backend API (Render) | `https://miune-docs-api.onrender.com/|
 | 📖 Documentación Swagger | `{BASE_URL}/api/docs` |
 
 ---
@@ -143,15 +143,11 @@ Frontend disponible en: `http://localhost:5173`
 ### Auth — `/api/auth`
 | Método | Ruta | Descripción | Auth |
 |--------|------|-------------|------|
-| POST | `/register` | Registrar nuevo usuario | ❌ |
-| POST | `/login` | Iniciar sesión → retorna JWT | ❌ |
 | GET | `/me` | Obtener perfil del usuario actual | ✅ JWT |
 
 ### Documentos — `/api/documentos`
 | Método | Ruta | Descripción | Auth |
 |--------|------|-------------|------|
-| GET | `/` | Listar documentos (paginación + filtros) | ❌ |
-| GET | `/:id` | Obtener documento por ID | ❌ |
 | POST | `/` | Crear documento (multipart/form-data) | ✅ JWT |
 | PUT | `/:id` | Actualizar documento | ✅ JWT |
 | DELETE | `/:id` | Eliminar documento | ✅ JWT |
@@ -161,8 +157,6 @@ Frontend disponible en: `http://localhost:5173`
 ### Categorías — `/api/categorias`
 | Método | Ruta | Descripción | Auth |
 |--------|------|-------------|------|
-| GET | `/` | Listar categorías | ❌ |
-| GET | `/:id` | Obtener categoría por ID | ❌ |
 | POST | `/` | Crear categoría | ✅ ADMIN |
 | PUT | `/:id` | Actualizar categoría | ✅ ADMIN |
 | DELETE | `/:id` | Eliminar categoría | ✅ ADMIN |
