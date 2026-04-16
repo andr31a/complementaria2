@@ -22,6 +22,22 @@
 
 ---
 
+## 🔐 Credenciales de Acceso al Frontend
+
+> Usuarios creados automáticamente por el seed (`npm run prisma:seed`). Todos comparten la misma contraseña.
+
+| # | Nombre | Email | Contraseña | Rol | Acceso al Dashboard |
+|---|--------|-------|-----------|-----|---------------------|
+| 1 | Ana Pérez | `ana@miune.edu` | `Password123!` | 🔴 ADMIN | ✅ Completo (CRUD Docs + Categorías) |
+| 2 | Luis Gómez | `luis@miune.edu` | `Password123!` | 🔵 USER | ✅ Solo lectura + subir documentos |
+| 3 | María Torres | `maria@miune.edu` | `Password123!` | 🔵 USER | ✅ Solo lectura + subir documentos |
+| 4 | Carlos Ruiz | `carlos@miune.edu` | `Password123!` | 🔵 USER | ✅ Solo lectura + subir documentos |
+| 5 | Elena Díaz | `elena@miune.edu` | `Password123!` | 🔵 USER | ✅ Solo lectura + subir documentos |
+
+> 💡 **Para evaluar el dashboard completo (CRUD), use la cuenta ADMIN:** `ana@miune.edu` / `Password123!`
+
+---
+
 ## 🛠️ Stack Tecnológico
 
 ### Backend
