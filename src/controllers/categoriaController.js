@@ -3,11 +3,27 @@ const AppError = require("../utils/AppError");
 
 exports.getAll = async (req, res, next) => {
   try {
-    const categorias = await categoriaModel.getAll();
+    const page = Number.parseInt(req.query.page, 10) || 1;
+    const pageSize = Number.parseInt(req.query.pageSize, 10) || 10;
+    
+    const filters = {
+      nombre: req.query.nombre,
+      activa: req.query.activa,
+    };
+
+    const sort = {
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
+    };
+
+    const { categorias, total } = await categoriaModel.getAll(page, pageSize, filters, sort);
 
     res.status(200).json({
       success: true,
       count: categorias.length,
+      total,
+      page,
+      pageSize,
       data: categorias,
     });
   } catch (error) {

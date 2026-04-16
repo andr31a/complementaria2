@@ -6,12 +6,24 @@ dotenv.config();
 
 const documentoRoutes = require("./routes/documentoRoutes");
 const categoriaRoutes = require("./routes/categoriaRoutes");
+const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
+const { globalLimiter } = require("./middleware/rateLimiter");
+const setupSwagger = require("./lib/swagger");
+const path = require("path");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(globalLimiter);
 
+// Servir la carpeta de bypass estático (para acceder a urlArchivo)
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+setupSwagger(app);
+
+app.use("/api/auth", authRoutes);
 app.use("/api/documentos", documentoRoutes);
 app.use("/api/categorias", categoriaRoutes);
 
@@ -29,8 +41,12 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(
-    `Servidor corriendo en modo ${process.env.NODE_ENV} en el puerto ${PORT}`,
-  );
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(
+      `Servidor corriendo en modo ${process.env.NODE_ENV} en el puerto ${PORT}`,
+    );
+  });
+}
+
+module.exports = app;

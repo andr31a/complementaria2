@@ -1,14 +1,35 @@
 const prisma = require("../lib/prisma");
 
-const getAll = async () => {
-  return prisma.categoria.findMany({
-    orderBy: { nombre: "asc" },
-    include: {
-      _count: {
-        select: { documentos: true },
+const getAll = async (page = 1, pageSize = 10, filters = {}, sort = { sortBy: "nombre", sortOrder: "asc" }) => {
+  const skip = (page - 1) * pageSize;
+  const where = {};
+  
+  if (filters.nombre) where.nombre = { contains: filters.nombre, mode: "insensitive" };
+  if (filters.activa !== undefined) {
+    where.activa = filters.activa === "true" || filters.activa === true;
+  }
+
+  const orderBy = { [sort.sortBy || "nombre"]: sort.sortOrder || "asc" };
+
+  const [categorias, total] = await Promise.all([
+    prisma.categoria.findMany({
+      where,
+      skip,
+      take: pageSize,
+      orderBy,
+      include: {
+        _count: { select: { documentos: true } },
       },
-    },
-  });
+    }),
+    prisma.categoria.count({ where }),
+  ]);
+
+  return {
+    categorias,
+    total,
+    page,
+    pageSize,
+  };
 };
 
 const getById = async (id) => {

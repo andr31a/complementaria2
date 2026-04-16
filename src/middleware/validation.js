@@ -1,115 +1,53 @@
-const Joi = require("joi");
+const { body, validationResult } = require("express-validator");
 const AppError = require("../utils/AppError");
 
-// Esquema base para los documentos
-const documentoSchema = Joi.object({
-  titulo: Joi.string().min(3).max(150).required().messages({
-    "string.empty": "El título no puede estar vacío",
-    "string.min": "El título debe tener al menos 3 caracteres",
-    "any.required": "El título es obligatorio",
-  }),
-  tipo: Joi.string()
-    .valid("application/pdf", "application/docx", "application/xlsx")
-    .required()
-    .messages({
-      "any.only": "El tipo debe ser pdf, docx o xlsx",
-      "any.required": "El tipo de archivo es obligatorio",
-    }),
-  peso: Joi.string().required().messages({
-    "any.required": "El peso del archivo es obligatorio",
-  }),
-  estado: Joi.string().valid("borrador", "publicado", "archivado").required(),
-  resumen: Joi.string().max(500).optional().allow(""),
-  urlArchivo: Joi.string().uri().optional().allow(""),
-  usuarioId: Joi.number().integer().positive().required().messages({
-    "any.required": "El usuarioId es obligatorio",
-  }),
-  categoriaId: Joi.number().integer().positive().required().messages({
-    "any.required": "El categoriaId es obligatorio",
-  }),
-});
-
-const categoriaSchema = Joi.object({
-  nombre: Joi.string().min(3).max(80).required().messages({
-    "string.empty": "El nombre no puede estar vacío",
-    "string.min": "El nombre debe tener al menos 3 caracteres",
-    "any.required": "El nombre es obligatorio",
-  }),
-  descripcion: Joi.string().max(255).optional().allow(""),
-  activa: Joi.boolean().optional(),
-});
-
-// Middleware para validar creación (POST)
-const validateCreate = (req, res, next) => {
-  const { error } = documentoSchema.validate(req.body, { abortEarly: false });
-
-  if (error) {
-    // Extraemos todos los mensajes de error de Joi y los unimos
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return next(new AppError(errorMessage, 400));
+// Checker general que emite AppError si hay problemas
+const catchValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((err) => err.msg).join(", ");
+    return next(new AppError(errorMessages, 400));
   }
   next();
 };
 
-// Middleware para validar actualización (PUT)
-const validateUpdate = (req, res, next) => {
-  // Al actualizar, todos los campos son opcionales, pero si vienen deben cumplir las reglas
-  const updateSchema = documentoSchema.fork(
-    [
-      "titulo",
-      "tipo",
-      "peso",
-      "estado",
-      "resumen",
-      "urlArchivo",
-      "usuarioId",
-      "categoriaId",
-    ],
-    (schema) => schema.optional(),
-  );
+const validateCreate = [
+  body("titulo").trim().isLength({ min: 3, max: 150 }).withMessage("El título debe tener entre 3 y 150 caracteres"),
+  body("tipo").isIn(["application/pdf", "application/docx", "application/xlsx", "image/jpeg", "image/png", "image/webp"]).withMessage("El tipo debe ser pdf, docx, xlsx o una imagen válida"),
+  body("peso").notEmpty().withMessage("El peso del archivo es obligatorio"),
+  body("estado").isIn(["borrador", "publicado", "archivado"]).withMessage("Estado inválido"),
+  body("resumen").optional().isString().isLength({ max: 500 }),
+  body("urlArchivo").optional().isString(),
+  body("usuarioId").toInt().isInt({ min: 1 }).withMessage("El usuarioId es obligatorio"),
+  body("categoriaId").toInt().isInt({ min: 1 }).withMessage("El categoriaId es obligatorio"),
+  catchValidationErrors
+];
 
-  const { error } = updateSchema.validate(req.body, { abortEarly: false });
+const validateUpdate = [
+  body("titulo").optional().trim().isLength({ min: 3, max: 150 }).withMessage("El título debe tener entre 3 y 150 caracteres"),
+  body("tipo").optional().isIn(["application/pdf", "application/docx", "application/xlsx", "image/jpeg", "image/png", "image/webp"]),
+  body("peso").optional().notEmpty(),
+  body("estado").optional().isIn(["borrador", "publicado", "archivado"]),
+  body("resumen").optional().isString().isLength({ max: 500 }),
+  body("urlArchivo").optional().isString(),
+  body("usuarioId").optional().toInt().isInt({ min: 1 }),
+  body("categoriaId").optional().toInt().isInt({ min: 1 }),
+  catchValidationErrors
+];
 
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return next(new AppError(errorMessage, 400));
-  }
-  next();
-};
+const validateCategoriaCreate = [
+  body("nombre").trim().isLength({ min: 3, max: 80 }).withMessage("El nombre de la categoría es obligatorio y mayor a 3 caracteres"),
+  body("descripcion").optional().isString().isLength({ max: 255 }),
+  body("activa").optional().isBoolean(),
+  catchValidationErrors
+];
 
-const validateCategoriaCreate = (req, res, next) => {
-  const { error } = categoriaSchema.validate(req.body, { abortEarly: false });
-
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return next(new AppError(errorMessage, 400));
-  }
-
-  next();
-};
-
-const validateCategoriaUpdate = (req, res, next) => {
-  const updateSchema = categoriaSchema.fork(["nombre", "descripcion", "activa"], (schema) =>
-    schema.optional(),
-  );
-
-  const { error } = updateSchema.validate(req.body, { abortEarly: false });
-
-  if (error) {
-    const errorMessage = error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    return next(new AppError(errorMessage, 400));
-  }
-
-  next();
-};
+const validateCategoriaUpdate = [
+  body("nombre").optional().trim().isLength({ min: 3, max: 80 }).withMessage("El nombre debe tener al menos 3 caracteres"),
+  body("descripcion").optional().isString().isLength({ max: 255 }),
+  body("activa").optional().isBoolean(),
+  catchValidationErrors
+];
 
 module.exports = {
   validateCreate,

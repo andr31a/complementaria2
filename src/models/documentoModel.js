@@ -6,7 +6,7 @@ const includeRelations = {
       id: true,
       nombre: true,
       email: true,
-      rol: true,
+      role: true,
     },
   },
   categoria: {
@@ -18,16 +18,25 @@ const includeRelations = {
   },
 };
 
-const getAll = async (page = 1, pageSize = 10) => {
+const getAll = async (page = 1, pageSize = 10, filters = {}, sort = { sortBy: "createdAt", sortOrder: "desc" }) => {
   const skip = (page - 1) * pageSize;
+  
+  const where = {};
+  if (filters.titulo) where.titulo = { contains: filters.titulo, mode: "insensitive" };
+  if (filters.estado) where.estado = filters.estado;
+  if (filters.categoriaId) where.categoriaId = Number(filters.categoriaId);
+
+  const orderBy = { [sort.sortBy || "createdAt"]: sort.sortOrder || "desc" };
+
   const [documentos, total] = await Promise.all([
     prisma.documento.findMany({
+      where,
       include: includeRelations,
       skip,
       take: pageSize,
-      orderBy: { createdAt: "desc" },
+      orderBy,
     }),
-    prisma.documento.count(),
+    prisma.documento.count({ where }),
   ]);
 
   return {

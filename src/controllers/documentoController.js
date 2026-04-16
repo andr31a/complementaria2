@@ -7,7 +7,19 @@ exports.getAll = async (req, res, next) => {
   try {
     const page = Number.parseInt(req.query.page, 10) || 1;
     const pageSize = Number.parseInt(req.query.pageSize, 10) || 10;
-    const { documentos, total } = await documentoModel.getAll(page, pageSize);
+    
+    const filters = {
+      titulo: req.query.titulo,
+      estado: req.query.estado,
+      categoriaId: req.query.categoriaId
+    };
+
+    const sort = {
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
+    };
+
+    const { documentos, total } = await documentoModel.getAll(page, pageSize, filters, sort);
 
     res.status(200).json({
       success: true,

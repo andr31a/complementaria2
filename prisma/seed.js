@@ -2,6 +2,7 @@ require("dotenv/config");
 
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
+const bcrypt = require("bcrypt");
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -46,39 +47,45 @@ async function main() {
   await prisma.categoria.deleteMany();
   await prisma.usuario.deleteMany();
 
+  const defaultPassword = bcrypt.hashSync("Password123!", 10);
   const usuariosData = [
     {
       nombre: "Ana Pérez",
       email: "ana@miune.edu",
-      rol: "ADMIN",
+      role: "ADMIN",
+      password: defaultPassword,
       activo: true,
       updatedAt: new Date(),
     },
     {
       nombre: "Luis Gómez",
       email: "luis@miune.edu",
-      rol: "EDITOR",
+      role: "USER",
+      password: defaultPassword,
       activo: true,
       updatedAt: new Date(),
     },
     {
       nombre: "María Torres",
       email: "maria@miune.edu",
-      rol: "AUTOR",
+      role: "USER",
+      password: defaultPassword,
       activo: true,
       updatedAt: new Date(),
     },
     {
       nombre: "Carlos Ruiz",
       email: "carlos@miune.edu",
-      rol: "AUTOR",
+      role: "USER",
+      password: defaultPassword,
       activo: true,
       updatedAt: new Date(),
     },
     {
       nombre: "Elena Díaz",
       email: "elena@miune.edu",
-      rol: "EDITOR",
+      role: "USER",
+      password: defaultPassword,
       activo: true,
       updatedAt: new Date(),
     },

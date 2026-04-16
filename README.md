@@ -1,166 +1,254 @@
-# 📂 API REST - Módulo de Gestión Documental (MiUNE 2.0)
+# 📂 MiUNE 2.0 — Sistema de Gestión Documental
 
-Backend con Node.js + Express + Prisma ORM para gestión documental con persistencia real en PostgreSQL.
+> Portal institucional full-stack para la gestión, clasificación y almacenamiento centralizado de documentos académicos. Construido con Node.js, Express y React como proyecto universitario de Bootcamp de Desarrollo de Software.
 
-## 🛠️ Stack
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js)](https://nodejs.org)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express)](https://expressjs.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://react.dev)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?logo=postgresql)](https://supabase.com)
+[![Redis](https://img.shields.io/badge/Redis-Cloud-DC382D?logo=redis)](https://redis.io)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)](https://prisma.io)
 
-- Node.js + Express
-- Prisma ORM
-- PostgreSQL
-- Joi (validación)
+---
 
-## 🚀 Instalación
+## 🚀 URLs de Producción
 
-1. Clonar el repositorio
-2. Instalar dependencias:
+| Servicio | URL |
+|----------|-----|
+| 🌐 Frontend (Vercel) | `https://miune-docs.vercel.app` *(pendiente de deploy)* |
+| ⚙️ Backend API (Render) | `https://miune-docs-api.onrender.com` *(pendiente de deploy)* |
+| 📖 Documentación Swagger | `{BASE_URL}/api/docs` |
+
+---
+
+## 🛠️ Stack Tecnológico
+
+### Backend
+| Tecnología | Uso |
+|-----------|-----|
+| **Node.js 20 + Express** | Servidor REST API |
+| **Prisma ORM** | Mapeo de Base de Datos |
+| **PostgreSQL (Supabase)** | Base de datos relacional en la nube |
+| **Redis (Redis Cloud)** | Caché de respuestas GET |
+| **Multer** | Manejo de uploads de archivos |
+| **Cloudinary** | Almacenamiento multimedia en la nube |
+| **JWT (jsonwebtoken)** | Autenticación stateless |
+| **bcrypt** | Hash seguro de contraseñas |
+| **express-validator** | Sanitización y validación de inputs |
+| **express-rate-limit** | Rate limiting y protección anti-abuso |
+| **Swagger (swagger-jsdoc)** | Documentación API auto-generada |
+| **Jest + Supertest** | Suite de 15+ tests de integración |
+
+### Frontend
+| Tecnología | Uso |
+|-----------|-----|
+| **React 18 + Vite** | SPA con bundler ultra-rápido |
+| **React Router DOM** | Enrutamiento anidado (Nested Routes) |
+| **Zustand** | Estado global con persistencia localStorage |
+| **Axios** | Cliente HTTP con interceptores JWT y auth 401 |
+| **Framer Motion** | Animaciones y transiciones fluidas |
+| **Lucide React** | Iconografía vectorial |
+| **React Helmet Async** | SEO dinámico (títulos y meta-tags) |
+
+---
+
+## ⚡ Instalación y Uso Local
+
+### Pre-requisitos
+- Node.js v20+
+- Una cuenta en [Supabase](https://supabase.com) (PostgreSQL)
+- Una cuenta en [Redis Cloud](https://redis.com/redis-enterprise-cloud/overview/)
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/tu-usuario/miune-docs-api.git
+cd miune-docs-api
+```
+
+### 2. Instalar dependencias del Backend
 
 ```bash
 npm install
 ```
 
-3. Copiar variables de entorno:
+### 3. Configurar variables de entorno
 
 ```bash
 cp .env.example .env
 ```
 
-4. Configurar `DATABASE_URL` en `.env`
-5. Generar Prisma Client:
+Edita el `.env` con tus credenciales reales:
+
+```env
+DATABASE_URL="postgresql://usuario:password@host:5432/miune_db"
+REDIS_URL="redis://usuario:password@host:puerto"
+JWT_SECRET="tu_clave_secreta_super_larga"
+JWT_EXPIRES_IN="24h"
+PORT=3000
+NODE_ENV=development
+CLOUDINARY_CLOUD_NAME=tu_cloud_name
+CLOUDINARY_API_KEY=tu_api_key
+CLOUDINARY_API_SECRET=tu_api_secret
+```
+
+### 4. Sincronizar esquema de Base de Datos
 
 ```bash
 npm run prisma:generate
+npx prisma db push
 ```
 
-6. Ejecutar migraciones:
-
-```bash
-npm run prisma:migrate
-```
-
-7. Poblar datos de prueba:
+### 5. Poblar datos de prueba
 
 ```bash
 npm run prisma:seed
 ```
 
-8. Iniciar servidor:
+Esto crea **5 usuarios**, **5 categorías** y **6 documentos** de ejemplo.
+
+### 6. Iniciar el servidor
 
 ```bash
 npm run dev
 ```
 
-Servidor local: `http://localhost:3000`
+API disponible en: `http://localhost:3000`  
+Documentación Swagger: `http://localhost:3000/api/docs`
 
-## 🌐 Endpoints
+### 7. Iniciar el Frontend
 
-### Documentos (`/api/documentos`)
-
-- `GET /` lista documentos (soporta `?page=1&pageSize=10`)
-- `GET /:id` obtiene documento por ID
-- `POST /` crea documento
-- `PUT /:id` actualiza documento
-- `DELETE /:id` elimina documento
-
-Ejemplo body `POST /api/documentos`:
-
-```json
-{
-  "titulo": "Reglamento Académico 2026",
-  "tipo": "application/pdf",
-  "peso": "1.5MB",
-  "estado": "borrador",
-  "resumen": "Versión preliminar para revisión",
-  "urlArchivo": "https://docs.miune.edu/reglamento-2026.pdf",
-  "usuarioId": 1,
-  "categoriaId": 2
-}
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-### Categorías (`/api/categorias`)
+Frontend disponible en: `http://localhost:5173`
 
-- `GET /` lista categorías
-- `GET /:id` obtiene categoría por ID
-- `POST /` crea categoría
-- `PUT /:id` actualiza categoría
-- `DELETE /:id` elimina categoría (si no tiene documentos asociados)
+---
 
-Ejemplo body `POST /api/categorias`:
+## 🔐 Credenciales de Prueba (Seed)
 
-```json
-{
-  "nombre": "Normativas",
-  "descripcion": "Reglamentos y políticas institucionales",
-  "activa": true
-}
+| Email | Contraseña | Rol |
+|-------|-----------|-----|
+| `ana@miune.edu` | `Password123!` | ADMIN |
+| `luis@miune.edu` | `Password123!` | USER |
+| `maria@miune.edu` | `Password123!` | USER |
+
+---
+
+## 📡 Endpoints de la API
+
+### Auth — `/api/auth`
+| Método | Ruta | Descripción | Auth |
+|--------|------|-------------|------|
+| POST | `/register` | Registrar nuevo usuario | ❌ |
+| POST | `/login` | Iniciar sesión → retorna JWT | ❌ |
+| GET | `/me` | Obtener perfil del usuario actual | ✅ JWT |
+
+### Documentos — `/api/documentos`
+| Método | Ruta | Descripción | Auth |
+|--------|------|-------------|------|
+| GET | `/` | Listar documentos (paginación + filtros) | ❌ |
+| GET | `/:id` | Obtener documento por ID | ❌ |
+| POST | `/` | Crear documento (multipart/form-data) | ✅ JWT |
+| PUT | `/:id` | Actualizar documento | ✅ JWT |
+| DELETE | `/:id` | Eliminar documento | ✅ JWT |
+
+**Query Params disponibles:** `?page=1&pageSize=10&titulo=reglamento&estado=publicado&sortBy=titulo&sortOrder=asc`
+
+### Categorías — `/api/categorias`
+| Método | Ruta | Descripción | Auth |
+|--------|------|-------------|------|
+| GET | `/` | Listar categorías | ❌ |
+| GET | `/:id` | Obtener categoría por ID | ❌ |
+| POST | `/` | Crear categoría | ✅ ADMIN |
+| PUT | `/:id` | Actualizar categoría | ✅ ADMIN |
+| DELETE | `/:id` | Eliminar categoría | ✅ ADMIN |
+
+---
+
+## 🏗️ Arquitectura del Sistema
+
+```
+┌─────────────────────────────────────────────────────┐
+│                 CLIENTE (React / Vite)               │
+│   Zustand Store ← Axios Interceptors → React Router  │
+└───────────────────────┬─────────────────────────────┘
+                        │ HTTP (JWT en Authorization Header)
+┌───────────────────────▼─────────────────────────────┐
+│                EXPRESS API (Node.js)                 │
+│  Rate Limiter → Auth Middleware → Controllers        │
+│  ┌─────────────┐   ┌──────────┐   ┌──────────────┐ │
+│  │   /auth     │   │ /docs    │   │ /categorias  │ │
+│  └─────────────┘   └──────────┘   └──────────────┘ │
+└──────┬─────────────────────┬────────────────────────┘
+       │                     │
+┌──────▼───────┐    ┌────────▼────────┐
+│  Redis Cloud │    │  Prisma ORM     │
+│  (Cache GET) │    │  (Models)       │
+└──────────────┘    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │ PostgreSQL      │
+                    │ (Supabase)      │
+                    └─────────────────┘
 ```
 
-## 🧠 Esquema de Base de Datos
+---
 
-```mermaid
-erDiagram
-    Usuario ||--o{ Documento : crea
-    Categoria ||--o{ Documento : clasifica
+## 🧪 Tests
 
-    Usuario {
-      int id PK
-      string nombre
-      string email UK
-      string rol
-      boolean activo
-      datetime createdAt
-      datetime updatedAt
-    }
-
-    Categoria {
-      int id PK
-      string nombre UK
-      string descripcion
-      boolean activa
-      datetime createdAt
-      datetime updatedAt
-    }
-
-    Documento {
-      int id PK
-      string titulo
-      string tipo
-      string peso
-      string estado
-      string resumen
-      string urlArchivo
-      int usuarioId FK
-      int categoriaId FK
-      datetime createdAt
-      datetime updatedAt
-    }
+```bash
+npm test
 ```
 
-## 📁 Estructura Relevante
+Suite de **15 tests de integración** usando Jest + Supertest:
+- Autenticación (registro, login, perfil)
+- RBAC (Control de Acceso Basado en Roles)
+- Paginación y filtros de Documentos
+- Paginación y filtros de Categorías
+- Caché de Redis
+- Uploads de archivos
+- Manejo de errores 404
 
-```text
-prisma/
-├── schema.prisma
-├── migrations/
-└── seed.js
+---
 
-src/
-├── controllers/
-├── lib/
-├── middleware/
-├── models/
-└── routes/
+## 📁 Estructura del Proyecto
+
+```
+miune-docs-api/
+├── frontend/               # React App (Vite)
+│   └── src/
+│       ├── pages/
+│       │   ├── Login.jsx
+│       │   ├── Dashboard.jsx
+│       │   └── dashboard/
+│       │       ├── Overview.jsx
+│       │       ├── DocumentosList.jsx
+│       │       ├── DocumentoForm.jsx
+│       │       ├── CategoriasList.jsx
+│       │       └── CategoriaForm.jsx
+│       ├── store/          # Zustand
+│       ├── api/            # Axios Interceptors
+│       └── components/     # AuthRoutes
+├── src/                    # Backend Express
+│   ├── controllers/
+│   ├── lib/                # Redis, Cloudinary, Swagger
+│   ├── middleware/         # Auth, Cache, RateLimit, Validation, Upload
+│   ├── models/
+│   └── routes/
+├── prisma/
+│   ├── schema.prisma
+│   └── seed.js
+├── docs/                   # Documentación adicional
+├── tests/                  # Jest + Supertest
+└── uploads/                # Archivos locales (bypass Cloudinary)
 ```
 
-## ✅ Estado del entregable Semana 3
+---
 
-- 3 tablas relacionadas: `Usuario`, `Categoria`, `Documento`
-- Migración inicial en `prisma/migrations/`
-- CRUD completo de `Documento` y `Categoria`
-- Seed con datos de prueba realistas y relaciones
-- `.env.example` con `DATABASE_URL`
+## 📝 Licencia
 
-## 🧪 Colección Postman
-
-Se incluye una colección para validar el flujo CRUD end-to-end:
-
-- `postman/miune-docs-api-semana3.postman_collection.json`
+MIT — Proyecto académico UNE 2026. Desarrollado con asistencia de IA (Antigravity / Google DeepMind).
